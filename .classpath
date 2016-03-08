@@ -137,7 +137,7 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.accumulo/accumulo-server/jars/accumulo-server-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.0.4-alpha-tests.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.0.4-alpha.jar"/>
+	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.0.4-alpha.jar" sourcepath="lib/hadoop-common-2.0.4-alpha-sources.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-annotations/jars/hadoop-annotations-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.commons/commons-math/jars/commons-math-2.1.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/xmlenc/xmlenc/jars/xmlenc-0.52.jar"/>
@@ -168,7 +168,7 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.sun.jersey.jersey-test-framework/jersey-test-framework-grizzly2/jars/jersey-test-framework-grizzly2-1.8.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.sun.jersey.contribs/jersey-guice/jars/jersey-guice-1.8.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-client/jars/hadoop-yarn-client-2.0.4-alpha.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-core/jars/hadoop-mapreduce-client-core-2.0.4-alpha.jar"/>
+	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-core/jars/hadoop-mapreduce-client-core-2.0.4-alpha.jar" sourcepath="lib/hadoop-mapreduce-client-core-2.0.4-alpha-sources.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-server-common/jars/hadoop-yarn-server-common-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.aspectj/aspectjtools/jars/aspectjtools-1.6.11.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.aspectj/aspectjrt/jars/aspectjrt-1.6.11.jar"/>
@@ -206,5 +206,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/snappy-java-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/xz-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.37.jar"/>
 	<classpathentry kind="output" path="build/eclipse-build"/>
 </classpath>
