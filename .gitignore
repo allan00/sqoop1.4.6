@@ -26,7 +26,7 @@
 nb-configuration.xml
 patch-process
 target
-
+*eclipse-build*
 # Sqoop1 specific
 .ant-targets-build.xml
 .launches
