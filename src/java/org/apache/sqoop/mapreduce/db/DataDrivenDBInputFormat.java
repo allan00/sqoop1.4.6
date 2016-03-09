@@ -49,7 +49,7 @@ import com.cloudera.sqoop.mapreduce.db.DBSplitter;
 import com.cloudera.sqoop.mapreduce.db.DataDrivenDBRecordReader;
 import com.cloudera.sqoop.mapreduce.db.DateSplitter;
 import com.cloudera.sqoop.mapreduce.db.FloatSplitter;
-import com.cloudera.sqoop.mapreduce.db.IntegerSplitter;
+//import com.cloudera.sqoop.mapreduce.db.IntegerSplitter;
 import com.cloudera.sqoop.mapreduce.db.TextSplitter;
 import com.cloudera.sqoop.mapreduce.db.DBInputFormat.DBInputSplit;
 
@@ -124,6 +124,7 @@ public class DataDrivenDBInputFormat<T extends DBWritable>
 
     int targetNumTasks = ConfigurationHelper.getJobNumMaps(job);
     String boundaryQuery = getDBConf().getInputBoundingQuery();
+    	String tableName = getDBConf().getInputTableName();
 
     // If user do not forced us to use his boundary query and we don't have to
     // bacause there is only one mapper we will return single split that
@@ -167,9 +168,16 @@ public class DataDrivenDBInputFormat<T extends DBWritable>
           + " --split-by) or lower the number of mappers to 1. Unknown SQL data"
           + " type: " + sqlDataType);
       }
-
-      return splitter.split(job.getConfiguration(), results,
-          getDBConf().getInputOrderBy());
+      
+//      return splitter.split(job.getConfiguration(),results,getDBConf().getInputOrderBy());
+      if(splitter instanceof org.apache.sqoop.mapreduce.db.IntegerSplitter){
+      				IntegerSplitter sp = (IntegerSplitter)splitter;
+      				return sp.split(job.getConfiguration(), connection,tableName,results,getDBConf().getInputOrderBy());
+      							}
+      else{
+      				return splitter.split(job.getConfiguration(),results,getDBConf().getInputOrderBy());
+      							}      				
+      
     } catch (SQLException e) {
       throw new IOException(e);
     } finally {
