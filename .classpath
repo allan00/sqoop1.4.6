@@ -207,5 +207,6 @@
 	<classpathentry kind="lib" path="lib/snappy-java-1.0.5.jar"/>
 	<classpathentry kind="lib" path="lib/xz-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.37.jar"/>
+	<classpathentry kind="lib" path="lib/jarsync.jar"/>
 	<classpathentry kind="output" path="build/eclipse-build"/>
 </classpath>
