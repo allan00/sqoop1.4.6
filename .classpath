@@ -68,7 +68,6 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.codehaus.jackson/jackson-jaxrs/jars/jackson-jaxrs-1.8.8.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.codehaus.jackson/jackson-xc/jars/jackson-xc-1.8.8.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.jamon/jamon-runtime/jars/jamon-runtime-2.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.google.protobuf/protobuf-java/jars/protobuf-java-2.4.0a.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/javax.activation/activation/jars/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/stax/stax-api/jars/stax-api-1.0.1.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/tomcat/jasper-compiler/jars/jasper-compiler-5.5.23.jar"/>
@@ -136,9 +135,6 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.accumulo/accumulo-minicluster/jars/accumulo-minicluster-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.accumulo/accumulo-server/jars/accumulo-server-1.5.0.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.google.code.gson/gson/jars/gson-2.2.2.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.0.4-alpha-tests.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-common/jars/hadoop-common-2.0.4-alpha.jar" sourcepath="lib/hadoop-common-2.0.4-alpha-sources.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-annotations/jars/hadoop-annotations-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.commons/commons-math/jars/commons-math-2.1.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/xmlenc/xmlenc/jars/xmlenc-0.52.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.sun.jersey/jersey-core/bundles/jersey-core-1.8.jar"/>
@@ -151,14 +147,8 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/log4j/log4j/bundles/log4j-1.2.17.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/net.java.dev.jets3t/jets3t/jars/jets3t-0.6.1.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/net.sf.kosmosfs/kfs/jars/kfs-0.3.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-auth/jars/hadoop-auth-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.jcraft/jsch/jars/jsch-0.1.42.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/javax.servlet.jsp/jsp-api/jars/jsp-api-2.1.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-hdfs/jars/hadoop-hdfs-2.0.4-alpha-tests.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-hdfs/jars/hadoop-hdfs-2.0.4-alpha.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-common/jars/hadoop-mapreduce-client-common-2.0.4-alpha.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-common/jars/hadoop-yarn-common-2.0.4-alpha.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-api/jars/hadoop-yarn-api-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.google.inject.extensions/guice-servlet/jars/guice-servlet-3.0.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.google.inject/guice/jars/guice-3.0.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/javax.inject/javax.inject/jars/javax.inject-1.jar"/>
@@ -167,9 +157,6 @@
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/io.netty/netty/bundles/netty-3.5.11.Final.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.sun.jersey.jersey-test-framework/jersey-test-framework-grizzly2/jars/jersey-test-framework-grizzly2-1.8.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/com.sun.jersey.contribs/jersey-guice/jars/jersey-guice-1.8.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-client/jars/hadoop-yarn-client-2.0.4-alpha.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-mapreduce-client-core/jars/hadoop-mapreduce-client-core-2.0.4-alpha.jar" sourcepath="lib/hadoop-mapreduce-client-core-2.0.4-alpha-sources.jar"/>
-	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.apache.hadoop/hadoop-yarn-server-common/jars/hadoop-yarn-server-common-2.0.4-alpha.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.aspectj/aspectjtools/jars/aspectjtools-1.6.11.jar"/>
 	<classpathentry kind="lib" path="/home/ping/.ivy2/cache/org.aspectj/aspectjrt/jars/aspectjrt-1.6.11.jar"/>
 	<classpathentry kind="lib" path="build/classes"/>
@@ -208,5 +195,22 @@
 	<classpathentry kind="lib" path="lib/xz-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.37.jar"/>
 	<classpathentry kind="lib" path="lib/jarsync.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-yarn-client-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-yarn-common-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-yarn-server-common-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-yarn-api-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-mapreduce-client-core-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-annotations-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-auth-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-common-2.6.0-tests.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-common-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-mapreduce-client-app-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-mapreduce-client-common-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-hdfs-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-hdfs-nfs-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-mapreduce-client-jobclient-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/hadoop-nfs-2.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/protobuf-java-2.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/htrace-core-3.0.4.jar"/>
 	<classpathentry kind="output" path="build/eclipse-build"/>
 </classpath>

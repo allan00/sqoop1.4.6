@@ -12,9 +12,9 @@ public class DeltaServer {
 		while(f){
 			//等待客户端的连接，如果没有获取连接
 			client = server.accept();
-			System.out.println("与客户端连接成功！");
+			System.out.println(client.getInetAddress()+"与客户端连接成功！");
 			//为每个客户端连接开启一个线程
-			new Thread(new ServerThread(client)).start();
+			new ServerThread(client).start();
 		}
 		server.close();
 	}
