@@ -43,7 +43,7 @@ public class ImportTool {
 			fs.create(new Path(realPath));
 		}
 		Date now = new Date(System.currentTimeMillis());
-		String stamp = ""+now.getYear()+now.getMonth()+now.getDay();
+		String stamp = TimeUtil.getNowStamp();
 		System.out.println(stamp);
 		FSDataInputStream mutatedInStream = fs.open(new Path(dst));
 		String directoryName = "/home/ping/client"+stamp;
