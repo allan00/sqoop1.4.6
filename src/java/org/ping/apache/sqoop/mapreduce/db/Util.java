@@ -63,10 +63,11 @@ public class Util {
         fos.close();
     }
 
-    public static void mergeDelta(File[] delta,FileOutputStream deltaToal,long mapSize) throws IOException {
+    public static void mergeDelta(File[] delta,FileOutputStream deltaToal) throws IOException {
         FileInputStream fis = null;
         Rdiff rdiff = new Rdiff();
         List<Delta> totalList = new LinkedList<Delta>();
+        long mapSize = delta[0].length();
 
         for(int i=0;i<delta.length;i++) {
             fis = new FileInputStream(delta[i]);

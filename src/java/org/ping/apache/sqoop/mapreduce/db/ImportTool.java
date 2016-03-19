@@ -11,15 +11,20 @@ import java.net.URI;
 import java.sql.Date;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.sqoop.mapreduce.MySQLDumpMapper;
 import org.metastatic.rsync.Delta;
 import org.metastatic.rsync.Rdiff;
 
 public class ImportTool {
+	public static final Log LOG = LogFactory.getLog(ImportTool.class.getName());
+	
 	public static void main(String[]  args) throws Exception {
 		ImportContext iContext = new ImportContext();
 		long start = System.currentTimeMillis();
@@ -32,8 +37,7 @@ public class ImportTool {
 	//the actual function to import table incrementally
 	public static void incrementalImport(ImportContext iContext) throws Exception{
 		String fileName = iContext.getFileName();
-		String defaultPath = "/user/ping/"+iContext.getTableName()+"/";
-		String realPath = defaultPath + fileName;
+		String realPath = iContext.getPath() + fileName;
 		//dst eg: hdfs://192.168.13.150:9000/user/ping/table_operate/mut.0
 		String dst = String.format("hdfs://%s:%d%s",iContext.getHdfsHost(),iContext.getHdfsPort(),realPath);
 		String info = "";
@@ -46,13 +50,13 @@ public class ImportTool {
 		String stamp = TimeUtil.getNowStamp();
 		System.out.println(stamp);
 		FSDataInputStream mutatedInStream = fs.open(new Path(dst));
-		String directoryName = "/home/ping/client"+stamp;
-		File folder = new File(directoryName);
-		File mutFile = new File(directoryName+"/"+"mut.0");
+		String workDirectoryName = System.getProperty("user.home")+"/client/"+stamp;
+		File workDirectory = new File(workDirectoryName);
+		workDirectory.deleteOnExit();
+		File mutFile = new File(workDirectoryName+"/"+fileName);
 		mutFile.deleteOnExit();
-		if(!folder.exists()&&!folder.isDirectory()){
-			folder.mkdir();
-			folder.deleteOnExit();
+		if(!workDirectory.exists()&&!workDirectory.isDirectory()){
+			workDirectory.mkdir();
 		}
 		if(!mutFile.exists()){
 			mutFile.createNewFile();
@@ -74,9 +78,16 @@ public class ImportTool {
 		InputStream in = client.getInputStream();
 		OutputStream out = client.getOutputStream();
 		try {
+			//建立连接后，发送stamp
+			info="hi server,stamp:"+stamp;
+			sendInfo(client,info);
+			while (!("hi client,stamp:"+stamp).equals(receiveInfo(client))) {
+				Thread.sleep(100L);
+			}
+			
 			// 先让deltaServer用mysqldump把数据导出
 			info = String.format("mysqldump --host=%s --port=%s --skip-opt --compact --no-create-db --no-create-info --quick"
-					+ " --single-transaction -uroot -proot %s %s",iContext.getMysqlHost(),iContext.getMysqlPort(), iContext.getDBName(),iContext.getTableName());
+					+ " --single-transaction -u%s -p%s %s %s",iContext.getMysqlHost(),iContext.getMysqlPort(), iContext.getMysqlUser(),iContext.getMysqlPassword(),iContext.getDbName(),iContext.getTableName());
 			sendInfo(client,info);
 			while (!"mysqldump finished".equals(receiveInfo(client))) {
 				Thread.sleep(100L);
@@ -89,7 +100,7 @@ public class ImportTool {
 			
 			//生成文件的摘要(signature)
 			String sigFileName = fileName + ".sig";
-			File sigFile  =new File("/home/ping/client"+stamp+"/" + sigFileName);
+			File sigFile  =new File(workDirectoryName+"/" + sigFileName);
 			sigFile.deleteOnExit();
 			OutputStream signOutStream = null;
 			signOutStream = new FileOutputStream(sigFile);
@@ -125,7 +136,7 @@ public class ImportTool {
 			
 			//接收delta文件
 			String deltaFileName = parseFileName(info);
-			File deltaFile = new File("/home/ping/client"+stamp+"/" + deltaFileName);
+			File deltaFile = new File(workDirectoryName+"/" + deltaFileName);
 			deltaFile.deleteOnExit();
 			long totalLen = parseLength(info);
 			long count = 0;
@@ -142,8 +153,8 @@ public class ImportTool {
 			
 			//如delta文件不为空，则利用delta和原文件重构文件，并上传到hdfs
 			if(deltaFile.length()!=0){			
-			String outputFileName = "mut.0.output";
-			Path outpath = new Path("/user/ping/"+iContext.getTableName() +"/"+ outputFileName);
+			String outputFileName = fileName+".output";
+			Path outpath = new Path(iContext.getPath() +"/"+ outputFileName);
 			FSDataOutputStream outputStream = fs.create(outpath); // 创建文件
 			List<Delta> delta = clientRdiff.readDeltas(new FileInputStream(deltaFile));
 			clientRdiff.rebuildFile(mutFile, delta, outputStream);
@@ -182,7 +193,7 @@ public class ImportTool {
 		if (lenIn == -1)
 			return "";
 		String info = new String(bufIn, 0, lenIn, "utf-8");
-		System.out.println("receive<----" + info);
+		LOG.info("receive<----" + info);
 		return info;
 	}
 
@@ -190,6 +201,6 @@ public class ImportTool {
 	{
 		OutputStream sockOut = sock.getOutputStream();
 		sockOut.write(infoStr.getBytes("utf-8"));
-		System.out.println("send---->" + infoStr);
+		LOG.info("send---->" + infoStr);
 	}
 }
