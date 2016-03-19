@@ -20,6 +20,8 @@ import org.apache.commons.logging.LogFactory;
 import org.metastatic.rsync.ChecksumPair;
 import org.metastatic.rsync.Rdiff;
 
+import com.ping.util.Util;
+
 /**
  * 该类为多线程类，用于服务端
  */
@@ -104,6 +106,7 @@ public class ServerThread extends Thread {
 					}
 					os.flush();
 					os.close();
+					is.close();
 					sendInfo(client, "mysqldump finished");
 				}
 
@@ -151,6 +154,7 @@ public class ServerThread extends Thread {
 					while ((len = deltaInStream.read(buf)) != -1) {
 						out.write(buf, 0, len); // 将从硬盘上读取的字节数据写入socket输出流
 					}
+					deltaInStream.close();
 
 				} else {
 					Thread.sleep(100L);
