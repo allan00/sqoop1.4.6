@@ -31,12 +31,12 @@ public class MyPerf {
 		String tableName = "table_operate";				
 		String fileName = "mut.0";										
 		String path = "/user/root/"+tableName+"/"; 
-		String mysqlHost = "pang1";	
+		String mysqlHost = "192.168.13.149";	
 		int mysqlPort = 3306;	
 		String mysqlUser = "root";
 		String mysqlPassword = "root";
 		String dbName = "gszxglzx";
-		String deltaHost = "pang1";						
+		String deltaHost = "192.168.13.149";						
 		int deltaServerPort = 20006;		
 		
 		ImportContext iContext = new ImportContext(hdfsHost, hdfsPort, tableName, fileName, path, mysqlHost, mysqlPort, mysqlUser, mysqlPassword, dbName, deltaHost, deltaServerPort);

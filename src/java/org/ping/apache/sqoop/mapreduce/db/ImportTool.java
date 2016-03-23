@@ -48,7 +48,6 @@ public class ImportTool {
 		}
 		Date now = new Date(System.currentTimeMillis());
 		String stamp = TimeUtil.getNowStamp();
-		System.out.println(stamp);
 		FSDataInputStream mutatedInStream = fs.open(new Path(dst));
 		String workDirectoryName = System.getProperty("user.home")+"/client/"+stamp;
 		File workDirectory = new File(workDirectoryName);

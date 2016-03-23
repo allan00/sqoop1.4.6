@@ -21,7 +21,7 @@ public class SqoopPerf {
 		// "sqoop import --connect jdbc:mysql://master:3306/gszxglzx --username root"
 		// +
 		// " --password root --table table_operate --fields-terminated-by \"|\" --lines-terminated-by \"\\n\" --incremental lastmodified  --check-column time --merge-key id --last-value \"2008-01-01 00:00:00\" --target-dir /user/ping/table_operate2";
-		String command = "sqoop import --direct --connect jdbc:mysql://master:3306/gszxglzx --username root"
+		String command = "sqoop import --direct --connect jdbc:mysql://db:3306/gszxglzx --username root"
 				+ " --password root --table table_operate --fields-terminated-by \"|\" --lines-terminated-by \"\\n\" --incremental lastmodified  --check-column time --merge-key id --target-dir /user/ping/table_operate2";
 		String[] arg = new String[]{"--last-value \"2008-01-01 00:00:00\""};
 		Process p = Runtime.getRuntime().exec(command,arg);
@@ -31,7 +31,7 @@ public class SqoopPerf {
 
 	public static void sqoopImport2() throws Exception {
 		// String cmd = "java -version";
-		String cmd = "sqoop import --direct --connect jdbc:mysql://master:3306/gszxglzx --username root --password root --table table_operate --fields-terminated-by \"|\" --lines-terminated-by \"\\n\" --incremental lastmodified  --check-column time --merge-key id --target-dir /user/ping/table_operate2";
+		String cmd = "sqoop import --direct --connect jdbc:mysql://db:3306/gszxglzx --username root --password root --table table_operate --fields-terminated-by \"|\" --lines-terminated-by \"\\n\" --incremental lastmodified  --check-column time --merge-key id --target-dir /user/ping/table_operate2";
 		String[] arg = new String[]{"--last-value \"2008-01-01 00:00:00\""};
 		Runtime rt = Runtime.getRuntime();
 		Process p = null;

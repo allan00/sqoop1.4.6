@@ -20,8 +20,6 @@ import org.apache.commons.logging.LogFactory;
 import org.metastatic.rsync.ChecksumPair;
 import org.metastatic.rsync.Rdiff;
 
-import com.ping.util.Util;
-
 /**
  * 该类为多线程类，用于服务端
  */
