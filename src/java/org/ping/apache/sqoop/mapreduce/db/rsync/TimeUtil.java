@@ -1,4 +1,4 @@
-package org.ping.apache.sqoop.mapreduce.db;
+package org.ping.apache.sqoop.mapreduce.db.rsync;
 
 import java.sql.Timestamp;
 

@@ -1,4 +1,4 @@
-package org.ping.apache.sqoop.mapreduce.db;
+package org.ping.apache.sqoop.mapreduce.db.rsync;
 
 public class ImportContext {
 	private String hdfsHost = "10.255.22.223";				//the ip of hdfs nameserver 
