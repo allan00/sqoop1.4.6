@@ -1,5 +1,6 @@
 package org.ping.apache.sqoop.mapreduce.db.rsync;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -155,7 +156,7 @@ public class ImportTool {
 			String outputFileName = fileName+".output";
 			Path outpath = new Path(iContext.getPath() +"/"+ outputFileName);
 			FSDataOutputStream outputStream = fs.create(outpath); // 创建文件
-			List<Delta> delta = clientRdiff.readDeltas(new FileInputStream(deltaFile));
+			List<Delta> delta = clientRdiff.readDeltas(new BufferedInputStream(new FileInputStream(deltaFile)));
 			clientRdiff.rebuildFile(mutFile, delta, outputStream);
 			fs.delete(new Path(realPath));
 			fs.rename(outpath, new Path(realPath));
