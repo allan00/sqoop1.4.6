@@ -20,6 +20,7 @@ package org.apache.sqoop.mapreduce.db;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,223 +34,242 @@ import org.apache.sqoop.util.PartitionUtil;
 import com.cloudera.sqoop.config.ConfigurationHelper;
 import com.cloudera.sqoop.mapreduce.db.DBSplitter;
 import com.cloudera.sqoop.mapreduce.db.DataDrivenDBInputFormat;
-import com.mysql.jdbc.Statement;
 
 /**
  * Implement DBSplitter over integer values.
  */
-public class IntegerSplitter implements DBSplitter  {
-  public static final Log LOG =
-      LogFactory.getLog(IntegerSplitter.class.getName());
+public class IntegerSplitter implements DBSplitter {
+	public static final Log LOG = LogFactory.getLog(IntegerSplitter.class.getName());
 
-    public List<InputSplit> split(Configuration conf,Connection connection,String tableName,ResultSet results,
-        String colName) throws SQLException {
-      long minVal = results.getLong(1);
-      long maxVal = results.getLong(2);
+	public List<InputSplit> split(Configuration conf, Connection connection, String tableName, ResultSet results, String colName) throws SQLException {
+		long minVal = results.getLong(1);
+		long maxVal = results.getLong(2);
 
-      String lowClausePrefix = colName + " >= ";
-      String highClausePrefix = colName + " < ";
+		String lowClausePrefix = colName + " >= ";
+		String highClausePrefix = colName + " < ";
 
-      int numSplits = ConfigurationHelper.getConfNumMaps(conf);
-      if (numSplits < 1) {
-        numSplits = 1;
-      }
+		int numSplits = ConfigurationHelper.getConfNumMaps(conf);
+		if (numSplits < 1) {
+			numSplits = 1;
+		}
 
-      if (results.getString(1) == null && results.getString(2) == null) {
-        // Range is null to null. Return a null split accordingly.
-        List<InputSplit> splits = new ArrayList<InputSplit>();
-        splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-            colName + " IS NULL", colName + " IS NULL"));
-        return splits;
-      }
+		if (results.getString(1) == null && results.getString(2) == null) {
+			// Range is null to null. Return a null split accordingly.
+			List<InputSplit> splits = new ArrayList<InputSplit>();
+			splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(colName + " IS NULL", colName + " IS NULL"));
+			return splits;
+		}
 
-      // Get all the split points together.
-      //List<Long> splitPoints = split(numSplits, minVal, maxVal);
-      List<Long> splitPoints = splitAdaptive(connection,tableName,numSplits, minVal, maxVal,colName);
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(String.format("Splits: [%,28d to %,28d] into %d parts",
-            minVal, maxVal, numSplits));
-        for (int i = 0; i < splitPoints.size(); i++) {
-          LOG.debug(String.format("%,28d", splitPoints.get(i)));
-        }
-      }
-      List<InputSplit> splits = new ArrayList<InputSplit>();
+		// Get all the split points together.
+		// List<Long> splitPoints = split(numSplits, minVal, maxVal);
+		List<Long> splitPoints = splitAdaptive2(connection, tableName, numSplits, minVal, maxVal, colName);
+		LOG.info("use splitAdaptive2");
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(String.format("Splits: [%,28d to %,28d] into %d parts", minVal, maxVal, numSplits));
+			for (int i = 0; i < splitPoints.size(); i++) {
+				LOG.debug(String.format("%,28d", splitPoints.get(i)));
+			}
+		}
+		List<InputSplit> splits = new ArrayList<InputSplit>();
 
-      // Turn the split points into a set of intervals.
-      long start = splitPoints.get(0);
-      for (int i = 1; i < splitPoints.size(); i++) {
-        long end = splitPoints.get(i);
+		// Turn the split points into a set of intervals.
+		long start = splitPoints.get(0);
+		for (int i = 1; i < splitPoints.size(); i++) {
+			long end = splitPoints.get(i);
 
-        if (i == splitPoints.size() - 1) {
-          // This is the last one; use a closed interval.
-          splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-              lowClausePrefix + Long.toString(start),
-              colName + " <= " + Long.toString(end)));
-        } else {
-          // Normal open-interval case.
-          splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-              lowClausePrefix + Long.toString(start),
-              highClausePrefix + Long.toString(end)));
-        }
+			if (i == splitPoints.size() - 1) {
+				// This is the last one; use a closed interval.
+				splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(lowClausePrefix + Long.toString(start), colName + " <= " + Long.toString(end)));
+			} else {
+				// Normal open-interval case.
+				splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(lowClausePrefix + Long.toString(start), highClausePrefix + Long.toString(end)));
+			}
 
-        start = end;
-      }
+			start = end;
+		}
 
-      if (results.getString(1) == null || results.getString(2) == null) {
-        // At least one extrema is null; add a null split.
-        splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-            colName + " IS NULL", colName + " IS NULL"));
-      }
+		if (results.getString(1) == null || results.getString(2) == null) {
+			// At least one extrema is null; add a null split.
+			splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(colName + " IS NULL", colName + " IS NULL"));
+		}
 
-      return splits;
-    }
-    
-    public List<InputSplit> split(Configuration conf, ResultSet results,
-            String colName) throws SQLException {
-          long minVal = results.getLong(1);
-          long maxVal = results.getLong(2);
+		return splits;
+	}
 
-          String lowClausePrefix = colName + " >= ";
-          String highClausePrefix = colName + " < ";
+	public List<InputSplit> split(Configuration conf, ResultSet results, String colName) throws SQLException {
+		long minVal = results.getLong(1);
+		long maxVal = results.getLong(2);
 
-          int numSplits = ConfigurationHelper.getConfNumMaps(conf);
-          if (numSplits < 1) {
-            numSplits = 1;
-          }
+		String lowClausePrefix = colName + " >= ";
+		String highClausePrefix = colName + " < ";
 
-          if (results.getString(1) == null && results.getString(2) == null) {
-            // Range is null to null. Return a null split accordingly.
-            List<InputSplit> splits = new ArrayList<InputSplit>();
-            splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-                colName + " IS NULL", colName + " IS NULL"));
-            return splits;
-          }
+		int numSplits = ConfigurationHelper.getConfNumMaps(conf);
+		if (numSplits < 1) {
+			numSplits = 1;
+		}
 
-          // Get all the split points together.
-          List<Long> splitPoints = split(numSplits, minVal, maxVal);
-          if (LOG.isDebugEnabled()) {
-            LOG.debug(String.format("Splits: [%,28d to %,28d] into %d parts",
-                minVal, maxVal, numSplits));
-            for (int i = 0; i < splitPoints.size(); i++) {
-              LOG.debug(String.format("%,28d", splitPoints.get(i)));
-            }
-          }
-          List<InputSplit> splits = new ArrayList<InputSplit>();
+		if (results.getString(1) == null && results.getString(2) == null) {
+			// Range is null to null. Return a null split accordingly.
+			List<InputSplit> splits = new ArrayList<InputSplit>();
+			splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(colName + " IS NULL", colName + " IS NULL"));
+			return splits;
+		}
 
-          // Turn the split points into a set of intervals.
-          long start = splitPoints.get(0);
-          for (int i = 1; i < splitPoints.size(); i++) {
-            long end = splitPoints.get(i);
+		// Get all the split points together.
+		List<Long> splitPoints = split(numSplits, minVal, maxVal);
+		if (LOG.isDebugEnabled()) {
+			LOG.debug(String.format("Splits: [%,28d to %,28d] into %d parts", minVal, maxVal, numSplits));
+			for (int i = 0; i < splitPoints.size(); i++) {
+				LOG.debug(String.format("%,28d", splitPoints.get(i)));
+			}
+		}
+		List<InputSplit> splits = new ArrayList<InputSplit>();
 
-            if (i == splitPoints.size() - 1) {
-              // This is the last one; use a closed interval.
-              splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-                  lowClausePrefix + Long.toString(start),
-                  colName + " <= " + Long.toString(end)));
-            } else {
-              // Normal open-interval case.
-              splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-                  lowClausePrefix + Long.toString(start),
-                  highClausePrefix + Long.toString(end)));
-            }
+		// Turn the split points into a set of intervals.
+		long start = splitPoints.get(0);
+		for (int i = 1; i < splitPoints.size(); i++) {
+			long end = splitPoints.get(i);
 
-            start = end;
-          }
+			if (i == splitPoints.size() - 1) {
+				// This is the last one; use a closed interval.
+				splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(lowClausePrefix + Long.toString(start), colName + " <= " + Long.toString(end)));
+			} else {
+				// Normal open-interval case.
+				splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(lowClausePrefix + Long.toString(start), highClausePrefix + Long.toString(end)));
+			}
 
-          if (results.getString(1) == null || results.getString(2) == null) {
-            // At least one extrema is null; add a null split.
-            splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(
-                colName + " IS NULL", colName + " IS NULL"));
-          }
+			start = end;
+		}
 
-          return splits;
-        }
+		if (results.getString(1) == null || results.getString(2) == null) {
+			// At least one extrema is null; add a null split.
+			splits.add(new DataDrivenDBInputFormat.DataDrivenDBInputSplit(colName + " IS NULL", colName + " IS NULL"));
+		}
 
-    /**
-     * Returns a list of longs one element longer than the list of input splits.
-     * This represents the boundaries between input splits.
-     * All splits are open on the top end, except the last one.
-     *
-     * So the list [0, 5, 8, 12, 18] would represent splits capturing the
-     * intervals:
-     *
-     * [0, 5)
-     * [5, 8)
-     * [8, 12)
-     * [12, 18] note the closed interval for the last split.
-     */
-    public List<Long> split(long numSplits, long minVal, long maxVal)
-        throws SQLException {
+		return splits;
+	}
 
-      List<Long> splits = new ArrayList<Long>();
+	/**
+	 * Returns a list of longs one element longer than the list of input splits.
+	 * This represents the boundaries between input splits. All splits are open
+	 * on the top end, except the last one.
+	 *
+	 * So the list [0, 5, 8, 12, 18] would represent splits capturing the
+	 * intervals:
+	 *
+	 * [0, 5) [5, 8) [8, 12) [12, 18] note the closed interval for the last
+	 * split.
+	 */
+	public List<Long> split(long numSplits, long minVal, long maxVal) throws SQLException {
 
-      // We take the min-max interval and divide by the numSplits and also
-      // calculate a remainder.  Because of integer division rules, numsplits *
-      // splitSize + minVal will always be <= maxVal.  We then use the remainder
-      // and add 1 if the current split index is less than the < the remainder.
-      // This is guaranteed to add up to remainder and not surpass the value.
-      long splitSize = (maxVal - minVal) / numSplits;
-      long remainder = (maxVal - minVal) % numSplits;
-      long curVal = minVal;
+		List<Long> splits = new ArrayList<Long>();
 
-      // This will honor numSplits as long as split size > 0.  If split size is
-      // 0, it will have remainder splits.
-      for (int i = 0; i <= numSplits; i++) {
-        splits.add(curVal);
-        if (curVal >= maxVal) {
-          break;
-        }
-        curVal += splitSize;
-        curVal += (i < remainder) ? 1 : 0;
-      }
+		// We take the min-max interval and divide by the numSplits and also
+		// calculate a remainder. Because of integer division rules, numsplits *
+		// splitSize + minVal will always be <= maxVal. We then use the
+		// remainder
+		// and add 1 if the current split index is less than the < the
+		// remainder.
+		// This is guaranteed to add up to remainder and not surpass the value.
+		long splitSize = (maxVal - minVal) / numSplits;
+		long remainder = (maxVal - minVal) % numSplits;
+		long curVal = minVal;
 
-      if (splits.size() == 1) {
-        // make a valid singleton split
-        splits.add(maxVal);
-      } else if ((maxVal - minVal) <= numSplits) {
-        // Edge case when there is lesser split points (intervals) then
-        // requested number of splits. In such case we are creating last split
-        // with two values, for example interval [1, 5] broken down into 5
-        // splits will create following conditions:
-        //  * 1 <= x < 2
-        //  * 2 <= x < 3
-        //  * 3 <= x < 4
-        //  * 4 <= x <= 5
-        // Notice that the last split have twice more data than others. In
-        // those cases we add one maxVal at the end to create following splits
-        // instead:
-        //  * 1 <= x < 2
-        //  * 2 <= x < 3
-        //  * 3 <= x < 4
-        //  * 4 <= x < 5
-        //  * 5 <= x <= 5
-        splits.add(maxVal);
-      }
+		// This will honor numSplits as long as split size > 0. If split size is
+		// 0, it will have remainder splits.
+		for (int i = 0; i <= numSplits; i++) {
+			splits.add(curVal);
+			if (curVal >= maxVal) {
+				break;
+			}
+			curVal += splitSize;
+			curVal += (i < remainder) ? 1 : 0;
+		}
 
-      return splits;
-    }
-    
-    public List<Long> splitAdaptive(Connection connection,String tableName,long numSplits, long minVal, long maxVal,String colName)
-            throws SQLException {
-    					String temp =maxVal+"";
-    					int digits = temp.length();
-    					String sql = String.format("select left(LPAD(%s,%d,0),2),count(*) from %s group by left(LPAD(%s,%d,0),2)", colName
-    							,digits,tableName,colName,digits);
-    					java.sql.Statement stmt = connection.createStatement();
-    					ResultSet rs  = null;
-    					rs = stmt.executeQuery(sql);
-    					ArrayList[] al = new ArrayList[2];
-    					al[0] = new ArrayList<Long>();
-    					al[1] = new ArrayList<Long>();
-    					long suffix = (long)Math.pow(10, digits-2); 
-    					while(rs.next()){
-    							al[0].add(rs.getLong(1)*suffix);
-    							al[1].add(rs.getLong(2));
-    					}
-    					rs.close();
-    					stmt.close();
-          List<Long> splits = PartitionUtil.partition(al,numSplits,minVal,maxVal);
+		if (splits.size() == 1) {
+			// make a valid singleton split
+			splits.add(maxVal);
+		} else if ((maxVal - minVal) <= numSplits) {
+			// Edge case when there is lesser split points (intervals) then
+			// requested number of splits. In such case we are creating last
+			// split
+			// with two values, for example interval [1, 5] broken down into 5
+			// splits will create following conditions:
+			// * 1 <= x < 2
+			// * 2 <= x < 3
+			// * 3 <= x < 4
+			// * 4 <= x <= 5
+			// Notice that the last split have twice more data than others. In
+			// those cases we add one maxVal at the end to create following
+			// splits
+			// instead:
+			// * 1 <= x < 2
+			// * 2 <= x < 3
+			// * 3 <= x < 4
+			// * 4 <= x < 5
+			// * 5 <= x <= 5
+			splits.add(maxVal);
+		}
 
-          return splits;
-        }
+		return splits;
+	}
+
+	public List<Long> splitAdaptive(Connection connection, String tableName, long numSplits, long minVal, long maxVal, String colName) throws SQLException {
+		String temp = maxVal + "";
+		int digits = temp.length();
+		String sql = String.format("select left(LPAD(%s,%d,0),2),count(*) from %s group by left(LPAD(%s,%d,0),2)", colName, digits, tableName, colName, digits);
+		java.sql.Statement stmt = connection.createStatement();
+		ResultSet rs = null;
+		rs = stmt.executeQuery(sql);
+		ArrayList[] al = new ArrayList[2];
+		al[0] = new ArrayList<Long>();
+		al[1] = new ArrayList<Long>();
+		long suffix = (long) Math.pow(10, digits - 2);
+		while (rs.next()) {
+			al[0].add(rs.getLong(1) * suffix);
+			al[1].add(rs.getLong(2));
+		}
+		rs.close();
+		stmt.close();
+		List<Long> splits = PartitionUtil.partition(al, numSplits, minVal, maxVal);
+
+		return splits;
+	}
+
+	public List<Long> splitAdaptive2(Connection connection, String tableName, long numSplits, long minVal, long maxVal, String colName) throws SQLException {
+		String temp = maxVal + "";
+		int digits = temp.length();
+		long totalCount = 0;
+		int compareDigit = 3;				//通过id的前三位进行统计
+		//查出数据表中总记录数
+		String sql = String.format("select count(*) from %s", tableName);
+		Statement stmt = connection.createStatement();
+		ResultSet rs = null;
+		rs = stmt.executeQuery(sql);
+		if (rs.next()) {
+			totalCount = rs.getLong(1);
+		}
+		rs.close();
+		stmt.close();
+		
+		//查出各个子区间的记录数
+		sql = String.format("select left(LPAD(%s,%d,0),%d),count(*) from %s group by left(LPAD(%s,%d,0),3)", colName, digits,compareDigit, tableName, colName, digits,compareDigit);
+		stmt = connection.createStatement();
+		rs = stmt.executeQuery(sql);
+		ArrayList<Long>[] al = new ArrayList[2];
+		al[0] = new ArrayList<Long>();
+		al[1] = new ArrayList<Long>();
+		long suffix = (long) Math.pow(10, digits - 3);
+		while (rs.next()) {
+			al[0].add(rs.getLong(1) * suffix);
+			al[1].add(rs.getLong(2));
+		}
+		
+		rs.close();
+		stmt.close();
+		List<Long> splits = PartitionUtil.partition(al, numSplits, minVal, maxVal,totalCount);
+
+		return splits;
+	}
+
 }
