@@ -28,14 +28,14 @@ public class MyPerf {
 	public static void main(String[]  args) throws Exception {
 		String hdfsHost = "master";				
 		int hdfsPort = 9000;														
-		String tableName = "table_operate";				
+		String tableName = "replyrelation";				
 		String fileName = "mut.0";										
-		String path = "/user/root/"+tableName+"/"; 
+		String path = "/user/hadoop/"+tableName+"/"; 
 		String mysqlHost = "192.168.13.149";	
 		int mysqlPort = 3306;	
 		String mysqlUser = "root";
 		String mysqlPassword = "root";
-		String dbName = "gszxglzx";
+		String dbName = "weibodata";
 		String deltaHost = "192.168.13.149";						
 		int deltaServerPort = 20006;		
 		
