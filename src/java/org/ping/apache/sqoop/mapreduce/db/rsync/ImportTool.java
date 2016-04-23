@@ -156,8 +156,7 @@ public class ImportTool {
 			String outputFileName = fileName+".output";
 			Path outpath = new Path(iContext.getPath() +"/"+ outputFileName);
 			FSDataOutputStream outputStream = fs.create(outpath); // 创建文件
-			List<Delta> delta = clientRdiff.readDeltas(new BufferedInputStream(new FileInputStream(deltaFile)));
-			clientRdiff.rebuildFile(mutFile, delta, outputStream);
+			clientRdiff.rebuildFile(mutFile, new FileInputStream(deltaFile), outputStream);
 			fs.delete(new Path(realPath));
 			fs.rename(outpath, new Path(realPath));
 			}
