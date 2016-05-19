@@ -253,7 +253,7 @@ public class IntegerSplitter implements DBSplitter {
 		stmt.close();
 		
 		//查出各个子区间的记录数
-		sql = String.format("select left(LPAD(%s,%d,0),%d),count(*) from %s group by left(LPAD(%s,%d,0),3)", colName, digits,compareDigit, tableName, colName, digits,compareDigit);
+		sql = String.format("select left(LPAD(%s,%d,0),%d),count(*) from %s group by left(LPAD(%s,%d,0),%d)", colName, digits,compareDigit, tableName, colName, digits,compareDigit,compareDigit);
 		stmt = connection.createStatement();
 		rs = stmt.executeQuery(sql);
 		ArrayList<Long>[] al = new ArrayList[2];
